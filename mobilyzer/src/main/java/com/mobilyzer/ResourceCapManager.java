@@ -1,11 +1,11 @@
 /*
  * Copyright 2012 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -28,14 +28,14 @@ import java.io.IOException;
 
 /**
  * A basic power manager implementation that decides whether a measurement can be scheduled based on
- * the current battery level: no measurements will be scheduled if the current battery is lower than
+ * the current battery level: no com.mobilyzer.measurements will be scheduled if the current battery is lower than
  * a threshold.
  */
 public class ResourceCapManager {
 
 
 
-  /** The minimum threshold below which no measurements will be scheduled */
+  /** The minimum threshold below which no com.mobilyzer.measurements will be scheduled */
   private int minBatteryThreshold;
   private Context context = null;
   private int dataLimit;// in Byte
@@ -61,8 +61,8 @@ public class ResourceCapManager {
   }
 
   /**
-   * Sets the minimum battery percentage below which measurements cannot be run.
-   * 
+   * Sets the minimum battery percentage below which com.mobilyzer.measurements cannot be run.
+   *
    * @param batteryThresh the battery percentage threshold between 0 and 100
    */
   public synchronized void setBatteryThresh(int batteryThresh) throws IllegalArgumentException {
@@ -78,9 +78,9 @@ public class ResourceCapManager {
 
   /**
    * Given a data profile, set the data limit and profile code accordingly.
-   * 
+   *
    * If an invalid code is given, leave as default (250 MB) and print a warning.
-   * 
+   *
    * @param dataLimitStr String describing the profile
    */
   public synchronized void setDataUsageLimit(DataUsageProfile profile) {
@@ -150,9 +150,9 @@ public class ResourceCapManager {
   /**
    * Store the data used this period and the beginning of the period in a file, in the format [time
    * reset, in seconds]_[bytes used].
-   * 
+   *
    * Note that the data used can be negative, due to a underused data budget from last period.
-   * 
+   *
    * @param dataUsed The updated amount of data to write
    * @param time The updated time to write
    */
@@ -172,7 +172,7 @@ public class ResourceCapManager {
   /**
    * Read the usage data (start of usage period and quantity used in bytes) from the usage data
    * file.
-   * 
+   *
    * @return An array consisting of the start of the usage period, then the data used so far. If the
    *         file does not exist, returns -1 in each argument.
    */
@@ -207,10 +207,10 @@ public class ResourceCapManager {
   /**
    * Updates the data consumption period: using the current time move ahead to the correct data
    * consumption period, and also update the data used so far.
-   * 
+   *
    * Data assigned to a previous data period is subtracted; this can go below zero, effectively
    * crediting unused data to future tasks.
-   * 
+   *
    * @param dataUsed Data consumed since the start of the last period
    * @param usageStartTimeSec Time since the start of the last period
    * @return
@@ -242,7 +242,7 @@ public class ResourceCapManager {
   /**
    * Helper function: given the beginning of the data usage period currrently under consideration,
    * determine if we're still in that period.
-   * 
+   *
    * @param usageStartTimeSec The start of the last stored data usage period
    * @return True if we are still in the same data usage period.
    */
@@ -254,13 +254,13 @@ public class ResourceCapManager {
 
   /**
    * Determines if the data limit has been exceeded.
-   * 
+   *
    * If there is no data limit, always returns false. If there is no valid data usage file, creates
    * a new one and returns false.
-   * 
+   *
    * Otherwise, checks if we are over the limit yet or if we can run another task. If a new data
    * period needs to be started, we do that too. *
-   * 
+   *
    * @param nextTaskType In the case of a TCP throughput task, we only run it if there is enough
    *        data left.
    * @return True if over the data limit
@@ -299,7 +299,7 @@ public class ResourceCapManager {
 
   /**
    * Determine how much data was consumed by a task and update the data usage accordingly.
-   * 
+   *
    * @param result Structure holding the measurement result from which we can extract data usage.
    * @param taskType The type of measurement task completed
    * @throws IOException

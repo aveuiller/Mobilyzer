@@ -58,7 +58,7 @@ public class ServerMeasurementTask implements Callable<MeasurementResult[]> {
 	/**
 	 * Notify the scheduler that this task is finished executing. The result can
 	 * be completed, paused or failed due to exception
-	 * 
+	 *
 	 * @param results
 	 *            Results of the task
 	 * @param error
@@ -67,7 +67,7 @@ public class ServerMeasurementTask implements Callable<MeasurementResult[]> {
 	private void broadcastMeasurementEnd(MeasurementResult[] results,
 			MeasurementError error) {
 
-		// Only broadcast information about measurements if they are true
+		// Only broadcast information about com.mobilyzer.measurements if they are true
 		// errors.
 		if (!(error instanceof MeasurementSkippedException)) {
 			Intent intent = new Intent();
@@ -79,7 +79,7 @@ public class ServerMeasurementTask implements Callable<MeasurementResult[]> {
 			intent.putExtra(UpdateIntent.TASKID_PAYLOAD, realTask.getTaskId());
 			intent.putExtra(UpdateIntent.CLIENTKEY_PAYLOAD, realTask.getKey());
 			intent.putExtra(UpdateIntent.TASK_TYPE_PAYLOAD, realTask.getType());
-			
+
 //			if (realTask.getType().equals(SequentialTask.TYPE) || realTask.getType().equals(ParallelTask.TYPE)){
 //				intent.putExtra(UpdateIntent.TASK_DESC_PAYLOAD, realTask.getDescription());
 //			}
@@ -152,12 +152,12 @@ public class ServerMeasurementTask implements Callable<MeasurementResult[]> {
 					r.getDeviceProperty().dnResolvability = contextCollector.dnsConnectivity;
 					r.getDeviceProperty().ipConnectivity = contextCollector.ipConnectivity;
 				}
-				
+
 
 				if (PhoneUtils.getPhoneUtils().getNetwork() != PhoneUtils.NETWORK_WIFI) {
 					rManager.updateDataUsage(realTask.getDataConsumed());
 				}
-				
+
 //				if (realTask.getDescription().priority == MeasurementTask.GCM_PRIORITY) {
 //					this.scheduler.checkin.uploadGCMMeasurementResult(
 //							results[0], rManager);

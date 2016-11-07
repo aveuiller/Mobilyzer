@@ -1,1 +1,1 @@
-include ':mobilyzer'
+include ':mobilyzer', ':measures'

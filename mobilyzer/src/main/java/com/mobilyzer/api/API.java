@@ -75,9 +75,9 @@ public final class API {
 
   /**
    * Action name of different type of result for broadcast receiver.
-   * userResultAction is not a constant value. We append the clientKey to 
+   * userResultAction is not a constant value. We append the clientKey to
    * UpdateIntent.USER_RESULT_ACTION so that only the user who submit the task
-   * can get the result   
+   * can get the result
    */
   public String userResultAction;
   public static final String SERVER_RESULT_ACTION =
@@ -87,18 +87,18 @@ public final class API {
   public String taskStatusAction;
   public String dataUsageAction;
   public String authAccountAction;
-  
+
   public final static int USER_PRIORITY = MeasurementTask.USER_PRIORITY;
   public final static int INVALID_PRIORITY = MeasurementTask.INVALID_PRIORITY;
-  
+
   private Context applicationContext;
-  
+
   private boolean isBound = false;
   private boolean isBindingToService = false;
   Messenger mSchedulerMessenger = null;
-  
+
   private String clientKey;
-  
+
   /**
    * Singleton api object for the entire application
    */
@@ -116,7 +116,7 @@ public final class API {
     this.pendingMsg = new LinkedList<Message>();
 
     this.userResultAction = UpdateIntent.USER_RESULT_ACTION + "." + clientKey;
-    
+
     this.batteryThresholdAction = UpdateIntent.BATTERY_THRESHOLD_ACTION + "."
         + clientKey;
     this.checkinIntervalAction = UpdateIntent.CHECKIN_INTERVAL_ACTION + "."
@@ -140,19 +140,19 @@ public final class API {
       apiObject = new API(parent, clientKey);
     }
     else {
-      // Safeguard to avoid using unbound API object 
+      // Safeguard to avoid using unbound API object
       apiObject.startAndBindService();
     }
     return apiObject;
   }
-  
+
   @Override
   public Object clone() throws CloneNotSupportedException {
     // Prevent the singleton object to be copied
     throw new CloneNotSupportedException();
   }
-  
-  
+
+
   /** Defines callbacks for binding and unbinding scheduler*/
   private ServiceConnection serviceConn = new ServiceConnection() {
     @Override
@@ -162,7 +162,7 @@ public final class API {
       mSchedulerMessenger = new Messenger(service);
       isBound = true;
       isBindingToService = false;
-      
+
       Logger.i("Register client key");
       Message msg = Message.obtain(null, Config.MSG_REGISTER_CLIENTKEY);
       Bundle data = new Bundle();
@@ -173,7 +173,7 @@ public final class API {
       } catch (MeasurementError e) {
         Logger.e("Register clientKey failed", e);
       }
-      
+
       Logger.i("Send pending message");
       while ( (msg = pendingMsg.poll()) != null ) {
         try {
@@ -183,7 +183,7 @@ public final class API {
         }
       }
     }
-    
+
     @Override
     public void onServiceDisconnected(ComponentName arg0) {
       // This callback is never called until the active scheduler is uninstalled
@@ -195,7 +195,7 @@ public final class API {
       startAndBindService();
     }
   };
-  
+
   /**
    * Bind to scheduler, automatically called when the API is initialized
    */
@@ -218,7 +218,7 @@ public final class API {
       isBindingToService = true;
     }
   }
-  
+
   /**
    * Unbind from scheduler, called in activity's onDestroy callback function
    */
@@ -247,19 +247,19 @@ public final class API {
    * scheduler by addTask or put into task list of parallel or sequential task
    * @param taskType Type of measurement (ping, dns, traceroute, etc.) for this
    *        measurement task.
-   * @param startTime Earliest time that measurements can be taken using this 
+   * @param startTime Earliest time that com.mobilyzer.measurements can be taken using this
    *        Task descriptor. The current time will be used in place of a null
-   *        startTime parameter. Measurements with a startTime more than 24 
+   *        startTime parameter. Measurements with a startTime more than 24
    *        hours from now will NOT be run.
-   * @param endTime Latest time that measurements can be taken using this Task
+   * @param endTime Latest time that com.mobilyzer.measurements can be taken using this Task
    *        descriptor. Tasks with an endTime before startTime will be canceled.
    *        Corresponding to the 24-hour rule in startTime, tasks with endTime
    *        later than 24 hours from now will be assigned a new endTime that
    *        ends 24 hours from now.
    * @param intervalSec Minimum number of seconds to elapse between consecutive
-   *        measurements taken with this description.
+   *        com.mobilyzer.measurements taken with this description.
    * @param count Maximum number of times that a measurement should be taken
-   *        with this description. A count of 0 means to continue the 
+   *        with this description. A count of 0 means to continue the
    *        measurement indefinitely (until end_time).
    * @param priority Two level of priority: USER_PRIORITY for user task and
    *        INVALID_PRIORITY for server task
@@ -272,7 +272,7 @@ public final class API {
     , Date endTime, double intervalSec, long count, long priority
     , int contextIntervalSec, Map<String, String> params)
         throws MeasurementError {
-    MeasurementTask task = null;    
+    MeasurementTask task = null;
     switch ( taskType ) {
       case DNSLOOKUP:
         task = new DnsLookupTask(new DnsLookupDesc(clientKey, startTime, endTime
@@ -318,25 +318,25 @@ public final class API {
    * MeasurementTask must be provided as the real tasks to be executed
    * @param manner Determine whether tasks in task list will be executed
    *        parallelly or sequentially (back-to-back)
-   * @param startTime Earliest time that measurements can be taken using this 
+   * @param startTime Earliest time that com.mobilyzer.measurements can be taken using this
    *        Task descriptor. The current time will be used in place of a null
-   *        startTime parameter. Measurements with a startTime more than 24 
+   *        startTime parameter. Measurements with a startTime more than 24
    *        hours from now will NOT be run.
-   * @param endTime Latest time that measurements can be taken using this Task
+   * @param endTime Latest time that com.mobilyzer.measurements can be taken using this Task
    *        descriptor. Tasks with an endTime before startTime will be canceled.
    *        Corresponding to the 24-hour rule in startTime, tasks with endTime
    *        later than 24 hours from now will be assigned a new endTime that
    *        ends 24 hours from now.
    * @param intervalSec Minimum number of seconds to elapse between consecutive
-   *        measurements taken with this description.
+   *        com.mobilyzer.measurements taken with this description.
    * @param count Maximum number of times that a measurement should be taken
-   *        with this description. A count of 0 means to continue the 
+   *        with this description. A count of 0 means to continue the
    *        measurement indefinitely (until end_time).
    * @param priority Two level of priority: USER_PRIORITY for user task and
    *        INVALID_PRIORITY for server task
    * @param contextIntervalSec interval between the context collection (in sec)
    * @param params Measurement parameters.
-   * @param taskList tasks to be executed 
+   * @param taskList tasks to be executed
    * @return The parallel or sequential task filled with those parameters
    * @throws MeasurementError manner is not valid
    */
@@ -355,7 +355,7 @@ public final class API {
           , intervalSec, count, priority, contextIntervalSec, params), taskList);
         break;
       default:
-        throw new MeasurementError("Undefined measurement composing type. " + 
+        throw new MeasurementError("Undefined measurement composing type. " +
             " Candidate: PARALLEL, SEQUENTIAL");
     }
     return task;
@@ -374,7 +374,7 @@ public final class API {
       return null;
     }
   }
-  
+
   /**
    * Helper method for sending messages to the scheduler
    * @param msg message to be sent
@@ -390,14 +390,14 @@ public final class API {
         msg.setData(data);
       }
       data.putString(UpdateIntent.CLIENTKEY_PAYLOAD, clientKey);
-      
+
       try {
         messenger.send(msg);
       } catch (RemoteException e) {
         String err = "remote scheduler failed!";
         Logger.e(err);
         throw new MeasurementError(err);
-      }   
+      }
     }
     else {
       String err = "API didn't bind to a scheduler. Message will be temporarily" +
@@ -406,7 +406,7 @@ public final class API {
       this.pendingMsg.offer(msg);
     }
   }
- 
+
   /**
    * Submit task to the scheduler.
    * Works in async way. The result will be returned in a intent whose action is
@@ -427,7 +427,7 @@ public final class API {
       Message msg = Message.obtain(null, Config.MSG_SUBMIT_TASK);
       Bundle data = new Bundle();
       data.putParcelable(UpdateIntent.MEASUREMENT_TASK_PAYLOAD, task);
-      msg.setData(data);  
+      msg.setData(data);
       sendMessage(msg);
     }
     else {
@@ -439,7 +439,7 @@ public final class API {
 
   /**
    * Cancel the task submitted to the scheduler
-   * @param localId task to be cancelled. Got by MeasurementTask.getTaskId() 
+   * @param taskId task to be cancelled. Got by MeasurementTask.getTaskId()
    * @return true for succeed, false for fail
    * @throws InvalidParameterException
    */
@@ -450,7 +450,7 @@ public final class API {
       Bundle data = new Bundle();
       Logger.i("API: try to cancel task " + taskId);
       data.putString(UpdateIntent.TASKID_PAYLOAD, taskId);
-      msg.setData(data);  
+      msg.setData(data);
       sendMessage(msg);
     }
     else {
@@ -459,9 +459,9 @@ public final class API {
       throw new MeasurementError(err);
     }
   }
-  
+
   /**
-   * Set authenticate account for uploading results. Anonymous by default 
+   * Set authenticate account for uploading results. Anonymous by default
    * @param account
    * @throws MeasurementError
    */
@@ -473,7 +473,7 @@ public final class API {
     msg.setData(data);
     sendMessage(msg);
   }
-  
+
   /**
    * Get current authenticate account used by scheduler
    * @throws MeasurementError
@@ -485,7 +485,7 @@ public final class API {
   }
   /**
    * Set battery threshold of the scheduler. Only a threshold larger than the
-   * current one will be accepted. 
+   * current one will be accepted.
    * @param threshold new battery threshold, must stay between 0 and 100
    * @throws MeasurementError
    */
@@ -502,10 +502,10 @@ public final class API {
     msg.setData(data);
     sendMessage(msg);
   }
-  
+
   /**
    * Get current battery threshold of the scheduler.
-   * Async call. Receive api.batteryThresholdAction to get the result 
+   * Async call. Receive api.batteryThresholdAction to get the result
    * @throws MeasurementError
    */
   public void getBatteryThreshold() throws MeasurementError {
@@ -513,10 +513,10 @@ public final class API {
     Message msg = Message.obtain(null, Config.MSG_GET_BATTERY_THRESHOLD);
     sendMessage(msg);
   }
-  
+
   /**
    * Set checkin interval of the scheduler. Only an interval larger than the
-   * current one will be accepted. 
+   * current one will be accepted.
    * @param interval new checkin interval, should be greater than min interval
    * @throws MeasurementError
    */
@@ -534,10 +534,10 @@ public final class API {
     msg.setData(data);
     sendMessage(msg);
   }
-  
+
   /**
    * Get current checkin interval of the scheduler.
-   * Async call. Receive api.checkinIntervalAction to get the result 
+   * Async call. Receive api.checkinIntervalAction to get the result
    * @throws MeasurementError
    */
   public void getCheckinInterval() throws MeasurementError {
@@ -545,10 +545,10 @@ public final class API {
     Message msg = Message.obtain(null, Config.MSG_GET_CHECKIN_INTERVAL);
     sendMessage(msg);
   }
-  
+
   /**
    * Get current status of that task.
-   * Async call. Receive api.taskStatusAction to get the result 
+   * Async call. Receive api.taskStatusAction to get the result
    * @param taskId the id of the target task
    * @throws MeasurementError
    */
@@ -563,7 +563,7 @@ public final class API {
 
   /**
    * Set data usage profile of the scheduler. Only an profile more conventional
-   * than the current one will be accepted. 
+   * than the current one will be accepted.
    * @param profile new data usage profile
    * @throws MeasurementError
    */
@@ -579,12 +579,12 @@ public final class API {
     msg.setData(data);
     Logger.d("Attempt setting data usage to " + profile);
     sendMessage(msg);
-    
+
   }
-  
+
   /**
    * Get current data usage of the scheduler.
-   * Async call. Receive api.dataUsageAction to get the result 
+   * Async call. Receive api.dataUsageAction to get the result
    * @throws MeasurementError
    */
   public void getDataUsage() throws MeasurementError {
@@ -592,12 +592,12 @@ public final class API {
     Logger.d("Attempt getting data usage");
     sendMessage(msg);
   }
-  
+
   /** Gets the currently available measurement descriptions*/
   public static Set<String> getMeasurementNames() {
     return MeasurementTask.getMeasurementNames();
   }
-  
+
   /** Get the type of a measurement based on its name. Type is for JSON interface only
    * where as measurement name is a readable string for the UI */
   public static String getTypeForMeasurementName(String name) {
