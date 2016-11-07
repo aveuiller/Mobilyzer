@@ -27,5 +27,4 @@ dependencies {
     compile 'org.dnsjava:dnsjava:2.0.6'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okio:okio:1.0.1'
-    testCompile 'junit:junit:4.12'
 }
