@@ -9,8 +9,106 @@ buildscript {
     }
 }
 
+// Default parameters
+if (!project.hasProperty("nexusUrl")) {
+    ext.nexusUrl = "file:///tmp/sdkRepo"
+}
+
+if (!project.hasProperty("nexusUsername")) {
+    ext.nexusUsername = ""
+}
+
+if (!project.hasProperty("nexusPassword")) {
+    ext.nexusPassword = ""
+}
+
+ext.nexusRelease = "${nexusUrl}/service/local/staging/deploy/maven2/"
+ext.nexusSnapshot = "${nexusUrl}/content/repositories/snapshots/"
+
+ext.commonLicense = {
+    name 'Apache 2.0'
+    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+}
+
+ext.devs = [
+        {
+            id 'aveuiller'
+            name 'Antoine Veuiller'
+            email 'aveuiller@gmail.com'
+        }
+]
+
 allprojects {
     repositories {
         jcenter()
     }
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+    group = 'io.apisense'
+    version = '1.0.0'
+    apply plugin: 'idea'
+}
+
+subprojects { sub ->
+    apply plugin: 'com.android.library'
+
+    android {
+        useLibrary 'org.apache.http.legacy'
+
+        compileSdkVersion 25
+        buildToolsVersion "24.0.0"
+
+        defaultConfig {
+            minSdkVersion 10
+            targetSdkVersion 25
+            versionCode 1
+            versionName version
+        }
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
+        }
+    }
+
+    task("javadoc", type: Javadoc) {
+        title = 'javadoc'
+        description = 'Generate the project documentation'
+        source = android.sourceSets.main.java.srcDirs
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        classpath = project.files(android.getBootClasspath().join(File.pathSeparator)) + files(ext.androidJar)
+        options {
+            links "http://docs.oracle.com/javase/7/docs/api/"
+            linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+        }
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+        failOnError false
+    }
+
+    afterEvaluate {
+        javadoc.classpath += files(android.libraryVariants.collect { variant ->
+            variant.javaCompile.classpath.files
+        })
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from('README.md')
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+}
+
+signing {
+    sign configurations.archives
 }

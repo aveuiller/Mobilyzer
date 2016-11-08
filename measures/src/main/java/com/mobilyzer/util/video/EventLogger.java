@@ -22,8 +22,8 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer.AudioTrackInitializationException;
 import com.google.android.exoplayer.MediaCodecTrackRenderer.DecoderInitializationException;
+import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.util.VerboseLogUtil;
 import com.mobilyzer.UpdateIntent;
 import com.mobilyzer.util.video.player.DemoPlayer;
@@ -323,7 +323,7 @@ public class EventLogger implements DemoPlayer.Listener, DemoPlayer.InfoListener
   }
 
   @Override
-  public void onAudioTrackInitializationError(AudioTrackInitializationException e) {
+  public void onAudioTrackInitializationError(AudioTrack.InitializationException e) {
     printInternalError("audioTrackInitializationError", e);
   }
 

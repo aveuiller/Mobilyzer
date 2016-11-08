@@ -1197,7 +1197,7 @@ public class RRCTask extends MeasurementTask {
    * <li>Create a randomly generated host name (to ensure that the host name is not cached). I found
    * on some devices that even when you clear the cache manually, the data remains in the cache.</li>
    * <li>Time how long it took to look it up.</li>
-   * <li>Count the total packets sent, globally on the phone. If more packets were sent than</li>
+   * <li>Count the total packets sent, globally on the phone. If more packets were sent than
    * expected, abort and try again. </li>
    * <li>Otherwise, save the data for that test and move to the next inter-packet interval.</li>
    * </ol>

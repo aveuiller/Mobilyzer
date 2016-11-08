@@ -1,31 +1,40 @@
-apply plugin: 'com.android.library'
-
-android {
-    useLibrary 'org.apache.http.legacy'
-
-    compileSdkVersion 25
-    buildToolsVersion "24.0.0"
-
-    defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-}
-
 dependencies {
     compile 'dnsjava:dnsjava:2.1.7'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.2.3'
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        repository(url: nexusRelease) {
+            authentication(userName: nexusUsername, password: nexusPassword)
+        }
+
+        snapshotRepository(url: nexusSnapshot) {
+            authentication(userName: nexusUsername, password: nexusPassword)
+        }
+
+        pom.project {
+            name 'Mobilyzer Measurements'
+            packaging 'jar'
+            description 'Network library determining QoE and QoS with various measures.'
+            url 'http://mobilyzer-project.mobi/'
+
+            scm {
+                connection 'scm:git:https://github.com/aveuiller/Mobilyzer.git'
+                developerConnection 'scm:git:https://github.com/aveuiller/Mobilyzer'
+                url 'https://github.com/aveuiller/Mobilyzer'
+            }
+
+            licenses {
+                license commonLicense
+            }
+            developers {
+                devs.collect({ developer it })
+            }
+        }
+    }
 }

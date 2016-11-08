@@ -546,7 +546,7 @@ public class DnsLookupTask extends MeasurementTask {
      * Since it is hard to get the amount of data sent directly,
      * use a fixed value.  The data consumed is usually small, and the fixed
      * value is a conservative estimate.
-     * <p/>
+     *
      * TODO find a better way to get this value
      */
     @Override

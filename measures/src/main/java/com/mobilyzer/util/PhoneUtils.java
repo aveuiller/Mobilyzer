@@ -199,8 +199,8 @@ public class PhoneUtils {
 	/**
 	 * Returns a string representing this phone:
 	 *
-	 * "Android_<hardware-type>-<build-release>_<network-type>_" +
-	 * "<network-carrier>_<mobile-type>_<Portrait-or-Landscape>"
+	 * "Android_&lt;hardware-type&gt;-&lt;build-release&gt;_&lt;network-type&gt;_" +
+	 * "&lt;network-carrier&gt;_&lt;mobile-type&gt;_&lt;Portrait-or-Landscape&gt;"
 	 *
 	 * hardware-type is e.g. "dream", "passion", "emulator", etc.
 	 * build-release is the SDK public release number e.g. "2.0.1" for Eclair.
@@ -990,7 +990,11 @@ public class PhoneUtils {
 		return IP_TYPE_UNKNOWN;
 	}
 
-	/** Returns the DeviceProperty needed to report the measurement result */
+	/** Returns the DeviceProperty needed to report the measurement result
+	 *
+	 * @param requestApp
+	 * @return
+     */
 	public DeviceProperty getDeviceProperty(String requestApp) {
 		String carrierName = telephonyManager.getNetworkOperatorName();
 		Location location;
