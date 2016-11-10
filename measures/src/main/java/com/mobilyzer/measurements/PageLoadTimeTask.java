@@ -25,6 +25,7 @@ import com.mobilyzer.MeasurementDesc;
 import com.mobilyzer.MeasurementResult;
 import com.mobilyzer.MeasurementResult.TaskProgress;
 import com.mobilyzer.MeasurementTask;
+import com.mobilyzer.PLTExecutorService;
 import com.mobilyzer.UpdateIntent;
 import com.mobilyzer.exceptions.MeasurementError;
 import com.mobilyzer.util.Logger;
@@ -207,11 +208,11 @@ public class PageLoadTimeTask extends MeasurementTask {
 		 PageLoadTimeDesc taskDesc = (PageLoadTimeDesc) this.measurementDesc;
 
 
-//		 Intent newintent = new Intent(PhoneUtils.getGlobalContext(), PLTExecutorService.class);
-//		 newintent.putExtra(UpdateIntent.PLT_TASK_PAYLOAD_URL, taskDesc.url);
-//		 newintent.putExtra(UpdateIntent.PLT_TASK_PAYLOAD_TEST_TYPE, taskDesc.spdyTest);
-//		 newintent.putExtra(UpdateIntent.PLT_TASK_PAYLOAD_STARTTIME, startTimeFilter);
-//		 PhoneUtils.getGlobalContext().startService(newintent);
+		 Intent newintent = new Intent(PhoneUtils.getGlobalContext(), PLTExecutorService.class);
+		 newintent.putExtra(UpdateIntent.PLT_TASK_PAYLOAD_URL, taskDesc.url);
+		 newintent.putExtra(UpdateIntent.PLT_TASK_PAYLOAD_TEST_TYPE, taskDesc.spdyTest);
+		 newintent.putExtra(UpdateIntent.PLT_TASK_PAYLOAD_STARTTIME, startTimeFilter);
+		 PhoneUtils.getGlobalContext().startService(newintent);
 		 Logger.d("ashkan_plt: PLT Test, Sending broadcast to start PLTExecutorService");
 
 		 IntentFilter filter = new IntentFilter();
@@ -316,7 +317,7 @@ public class PageLoadTimeTask extends MeasurementTask {
 			 mrArray[0]=result;
 		 }
 
-//		 PhoneUtils.getGlobalContext().stopService(new Intent(PhoneUtils.getGlobalContext(), PLTExecutorService.class));
+		 PhoneUtils.getGlobalContext().stopService(new Intent(PhoneUtils.getGlobalContext(), PLTExecutorService.class));
 		 return mrArray;
 
 	 }

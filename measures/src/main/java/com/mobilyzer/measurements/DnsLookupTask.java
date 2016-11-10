@@ -35,6 +35,7 @@ import org.xbill.DNS.Message;
 import org.xbill.DNS.MobilyzerTCPClient;
 import org.xbill.DNS.MobilyzerUDPClient;
 import org.xbill.DNS.Name;
+import org.xbill.DNS.OPTRecord;
 import org.xbill.DNS.Rcode;
 import org.xbill.DNS.Record;
 import org.xbill.DNS.SimpleResolver;
@@ -279,7 +280,8 @@ public class DnsLookupTask extends MeasurementTask {
         // responses
         int qid = query.getHeader().getID();
         byte[] output = query.toWire();
-        int udpSize = query.getOPT().getPayloadSize();
+        OPTRecord opt = query.getOPT();
+        int udpSize = opt != null ? opt.getPayloadSize() : 512;
 //        DnsLookupDesc desc = (DnsLookupDesc) this.measurementDesc;
         long endTime = System.currentTimeMillis() + 60 * 5 * 1000;
 

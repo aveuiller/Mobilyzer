@@ -696,17 +696,17 @@ public class RRCTask extends MeasurementTask {
      * @return Whether or not there is interfering traffic
      */
     boolean isTrafficInterfering(int expectedRcv, int expectedSent) {
-      packetsLast = getPacketsSent();
-
-      long rcvPackets = (packetsLast[0] - packetsFirst[0]);
-      long sentPackets = (packetsLast[1] - packetsFirst[1]);
-      if (rcvPackets <= expectedRcv && sentPackets <= expectedSent) {
-        Logger.d("No competing traffic, continue");
+//      packetsLast = getPacketsSent();
+//
+//      long rcvPackets = (packetsLast[0] - packetsFirst[0]);
+//      long sentPackets = (packetsLast[1] - packetsFirst[1]);
+//      if (rcvPackets <= expectedRcv && sentPackets <= expectedSent) {
+//        Logger.d("No competing traffic, continue");
         return false;
-      }
-      Logger.d("Competing traffic, retry");
-
-      return true;
+//      }
+//      Logger.d("Competing traffic, retry");
+//
+//      return true;
     }
 
     /**

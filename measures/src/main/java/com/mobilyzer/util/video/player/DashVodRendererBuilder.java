@@ -29,6 +29,7 @@ import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecUtil;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.SampleSource;
+import com.google.android.exoplayer.SmoothFrameReleaseTimeHelper;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.chunk.ChunkSampleSource;
 import com.google.android.exoplayer.chunk.ChunkSource;
@@ -53,6 +54,7 @@ import com.google.android.exoplayer.upstream.HttpDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher.ManifestCallback;
 import com.google.android.exoplayer.util.MimeTypes;
 import com.google.android.exoplayer.util.Util;
+import com.mobilyzer.util.Logger;
 import com.mobilyzer.util.video.EventLogger;
 import com.mobilyzer.util.video.player.DemoPlayer.RendererBuilder;
 import com.mobilyzer.util.video.player.DemoPlayer.RendererBuilderCallback;
@@ -117,14 +119,19 @@ public class DashVodRendererBuilder implements RendererBuilder,
 
   @Override
   public void onManifest(String contentId, MediaPresentationDescription manifest) {
-   /* Handler mainHandler = player.getMainHandler();
+    Handler mainHandler = player.getMainHandler();
     LoadControl loadControl = new DefaultLoadControl(new BufferPool(BUFFER_SEGMENT_SIZE));
-//    DefaultBandwidthMeter videoBandwidthMeter = new DefaultBandwidthMeter(mainHandler, player);
-    DefaultBandwidthMeter videoBandwidthMeter = new DefaultBandwidthMeter("video", mainHandler, player);
-    DefaultBandwidthMeter audioBandwidthMeter = new DefaultBandwidthMeter("audio", mainHandler, player);
+    DefaultBandwidthMeter videoBandwidthMeter = new DefaultBandwidthMeter(mainHandler, player);
+//    DefaultBandwidthMeter videoBandwidthMeter = new DefaultBandwidthMeter("video", mainHandler, player);
+//    DefaultBandwidthMeter audioBandwidthMeter = new DefaultBandwidthMeter("audio", mainHandler, player);
 
     // Obtain Representations for playback.
-    int maxDecodableFrameSize = MediaCodecUtil.maxH264DecodableFrameSize();
+    int maxDecodableFrameSize = 0;
+    try {
+      maxDecodableFrameSize = MediaCodecUtil.maxH264DecodableFrameSize();
+    } catch (MediaCodecUtil.DecoderQueryException e) {
+      Logger.e(e.getMessage());
+    }
     ArrayList<Representation> audioRepresentationsList = new ArrayList<Representation>();
     ArrayList<Representation> videoRepresentationsList = new ArrayList<Representation>();
     Period period = manifest.periods.get(0);
@@ -192,10 +199,11 @@ public class DashVodRendererBuilder implements RendererBuilder,
 //          new AdaptiveEvaluator(bandwidthMeter), videoRepresentations);
       if (adaptiveType== AdaptiveType.CBA){
         videoChunkSource = new DashChunkSource(videoDataSource,
-          new AdaptiveEvaluator(videoBandwidthMeter, manifest.duration,mainHandler, player), videoRepresentations);
+          new AdaptiveEvaluator(videoBandwidthMeter/*, manifest.duration,mainHandler, player*/), videoRepresentations);
       }else{
         videoChunkSource = new DashChunkSource(videoDataSource,
-          new BufferBasedAdaptiveEvaluator(videoBandwidthMeter, manifest.duration, mainHandler, player ), videoRepresentations);
+//          new AdaptiveEvaluator(videoBandwidthMeter/*, manifest.duration,mainHandler, player*/), videoRepresentations);
+            new AdaptiveEvaluator(videoBandwidthMeter), videoRepresentations);
       }
     } else {
       throw new IllegalStateException("Unexpected mime type: " + mimeType);
@@ -206,9 +214,10 @@ public class DashVodRendererBuilder implements RendererBuilder,
 //    MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(videoSampleSource,
 //        drmSessionManager, true, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
 //        mainHandler, player, 50);
-    MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(videoSampleSource,
-        drmSessionManager, true, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
-        mainHandler, player, 1);
+      SmoothFrameReleaseTimeHelper timeHelper = new SmoothFrameReleaseTimeHelper(60, true);
+      MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(videoSampleSource,
+        drmSessionManager, true, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000L,
+        timeHelper, mainHandler, null, 1);
 
     // Build the audio renderer.
     final String[] audioTrackNames;
@@ -220,7 +229,7 @@ public class DashVodRendererBuilder implements RendererBuilder,
       audioRenderer = null;
     } else {
 //      DataSource audioDataSource = new HttpDataSource(userAgent, null, bandwidthMeter);
-      DataSource audioDataSource = new HttpDataSource(userAgent, null, audioBandwidthMeter);
+      DataSource audioDataSource = new HttpDataSource(userAgent, null, videoBandwidthMeter);
       audioTrackNames = new String[audioRepresentationsList.size()];
       ChunkSource[] audioChunkSources = new ChunkSource[audioRepresentationsList.size()];
       FormatEvaluator audioEvaluator = new FormatEvaluator.FixedEvaluator();
@@ -256,7 +265,7 @@ public class DashVodRendererBuilder implements RendererBuilder,
     renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
     renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
     renderers[DemoPlayer.TYPE_DEBUG] = debugRenderer;
-    callback.onRenderers(trackNames, multiTrackChunkSources, renderers);*/
+    callback.onRenderers(trackNames, multiTrackChunkSources, renderers);
   }
 
   private Representation[] getSdRepresentations(Representation[] representations) {

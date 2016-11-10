@@ -20,12 +20,17 @@ import android.media.MediaCodec;
 import android.net.Uri;
 import android.widget.TextView;
 
-//import com.google.android.exoplayer.FrameworkSampleSource;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
+import com.google.android.exoplayer.SampleSource;
+import com.google.android.exoplayer.SmoothFrameReleaseTimeHelper;
 import com.google.android.exoplayer.TrackRenderer;
+import com.google.android.exoplayer.source.DefaultSampleSource;
+import com.google.android.exoplayer.source.FrameworkSampleExtractor;
 import com.mobilyzer.util.video.player.DemoPlayer.RendererBuilder;
 import com.mobilyzer.util.video.player.DemoPlayer.RendererBuilderCallback;
+
+import java.util.Collections;
 
 /**
  * A {@link RendererBuilder} for streams that can be read using
@@ -45,11 +50,14 @@ public class DefaultRendererBuilder implements RendererBuilder {
 
   @Override
   public void buildRenderers(DemoPlayer player, RendererBuilderCallback callback) {
-/*    // Build the video and audio renderers.
-    FrameworkSampleSource sampleSource = new FrameworkSampleSource(context, uri, null, 2);
+    // Build the video and audio renderers.
+    SmoothFrameReleaseTimeHelper timeHelper = new SmoothFrameReleaseTimeHelper(60, true);
+    FrameworkSampleExtractor extractor = new FrameworkSampleExtractor(context, uri, Collections.<String, String>emptyMap());
+//    FrameworkSampleSource sampleSource = new FrameworkSampleSource(context, uri, null, 2);
+    SampleSource sampleSource = new DefaultSampleSource(extractor, 2);
     MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
         null, true, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
-        player.getMainHandler(), player, 1);
+        timeHelper, player.getMainHandler(), null, 1);
     MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
         null, true, player.getMainHandler(), player);
 
@@ -63,7 +71,7 @@ public class DefaultRendererBuilder implements RendererBuilder {
     renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
     renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
     renderers[DemoPlayer.TYPE_DEBUG] = debugRenderer;
-    callback.onRenderers(null, null, renderers);*/
+    callback.onRenderers(null, null, renderers);
   }
 
 }

@@ -32,6 +32,7 @@ import com.mobilyzer.MeasurementDesc;
 import com.mobilyzer.MeasurementResult;
 import com.mobilyzer.MeasurementResult.TaskProgress;
 import com.mobilyzer.MeasurementTask;
+import com.mobilyzer.PLTExecutorService;
 import com.mobilyzer.UpdateIntent;
 import com.mobilyzer.exceptions.MeasurementError;
 import com.mobilyzer.util.Logger;
@@ -317,7 +318,7 @@ public class VideoQoETask extends MeasurementTask {
             mrArray[0]=result;
         }
 
-//    PhoneUtils.getGlobalContext().stopService(new Intent(PhoneUtils.getGlobalContext(), PLTExecutorService.class));
+    PhoneUtils.getGlobalContext().stopService(new Intent(PhoneUtils.getGlobalContext(), PLTExecutorService.class));
         return mrArray;
     }
 

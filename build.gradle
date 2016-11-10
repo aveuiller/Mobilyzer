@@ -44,8 +44,8 @@ allprojects {
     }
     apply plugin: 'maven'
     apply plugin: 'signing'
-    group = 'io.apisense'
-    version = '1.1.0-SNAPSHOT'
+    group = 'io.apisense.mobilyzer'
+    version = '1.0.0-SNAPSHOT'
     apply plugin: 'idea'
 }
 
@@ -59,7 +59,7 @@ subprojects { sub ->
         buildToolsVersion "24.0.0"
 
         defaultConfig {
-            minSdkVersion 10
+            minSdkVersion 16
             targetSdkVersion 25
             versionCode 1
             versionName version
@@ -100,7 +100,7 @@ subprojects { sub ->
 
     task sourcesJar(type: Jar) {
         classifier = 'sources'
-        from('README.md')
+        from android.sourceSets.main.java.srcDirs
     }
 
     artifacts {
