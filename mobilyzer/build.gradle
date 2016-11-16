@@ -10,12 +10,12 @@ uploadArchives {
     repositories.mavenDeployer {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        repository(url: "$artifactory_contextUrl/apisense-release") {
-            authentication(userName: artifactory_user, password: artifactory_password)
+        repository(url: nexusRelease) {
+            authentication(userName: nexusUsername, password: nexusPassword)
         }
 
-        snapshotRepository(url: "$artifactory_contextUrl/apisense-snapshot") {
-            authentication(userName: artifactory_user, password: artifactory_password)
+        snapshotRepository(url: nexusSnapshot) {
+            authentication(userName: nexusUsername, password: nexusPassword)
         }
 
         pom.project {
